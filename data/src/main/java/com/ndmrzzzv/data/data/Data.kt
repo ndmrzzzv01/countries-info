@@ -6,10 +6,10 @@ data class Country(
     @SerializedName("name") val name: Name?,
     @SerializedName("flags") val flags: Flag?,
     @SerializedName("population") val population: Int?,
-    @SerializedName("area") val area: Int?,
+    @SerializedName("area") val area: Double?,
     @SerializedName("capital") val capital: List<String>?,
     @SerializedName("coatOfArms") val coatOfArms: CoatOfArms?,
-    @SerializedName("languages") val languages: List<String>?,
+//    @SerializedName("languages") val languages: List<String>?,
     @SerializedName("maps") val maps: Maps?,
     @SerializedName("timezones") val timezones: List<String>?,
     @SerializedName("borders") val borders: List<String>?

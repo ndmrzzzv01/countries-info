@@ -18,7 +18,7 @@ class CountriesRepositoryImpl(
                 country.capital,
                 country.name?.official,
                 country.coatOfArms?.png,
-                country.languages,
+//                country.languages,
                 country.maps?.googleMaps,
                 country.timezones,
                 country.borders

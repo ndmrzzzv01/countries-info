@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Countries Info</string>
+    <string name="img_of_flag">img_of_flag</string>
 </resources>
