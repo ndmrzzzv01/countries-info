@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/sort_a_z"
+        android:title="@string/sort_by_name_a_z" />
+    <item
+        android:id="@+id/sort_z_a"
+        android:title="@string/sort_by_name_z_a" />
+
+    <item
+        android:id="@+id/population_up"
+        android:title="@string/sort_by_population_low_to_high" />
+    <item
+        android:id="@+id/population_down"
+        android:title="@string/sort_by_population_high_to_low" />
+
+    <item
+        android:id="@+id/surface_up"
+        android:title="@string/sort_by_surface_low_to_high" />
+    <item
+        android:id="@+id/surface_down"
+        android:title="@string/sort_by_surface_high_to_low" />
+</menu>

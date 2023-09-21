@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">Countries Info</string>
     <string name="img_of_flag">img_of_flag</string>
+    <string name="search_country_by_name">Search Country by Name</string>
+    <string name="sort_by_name_a_z">Sort by name (A - Z)</string>
+    <string name="sort_by_name_z_a">Sort by name (Z - A)</string>
+    <string name="sort_by_population_low_to_high">Sort by population (low to high)</string>
+    <string name="sort_by_population_high_to_low">Sort by population (high to low)</string>
+    <string name="sort_by_surface_low_to_high">Sort by surface (low to high)</string>
+    <string name="sort_by_surface_high_to_low">Sort by surface (high to low)</string>
 </resources>
