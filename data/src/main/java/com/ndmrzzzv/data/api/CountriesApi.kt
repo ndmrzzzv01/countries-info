@@ -10,6 +10,6 @@ interface CountriesApi {
     suspend fun getAllCountries(): List<Country>
 
     @GET("alpha/{code}")
-    suspend fun searchCountryByCode(@Path("code") code: String): Country
+    suspend fun searchCountryByCode(@Path("code") code: String): List<Country>
 
 }

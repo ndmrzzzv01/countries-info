@@ -13,8 +13,8 @@ class CountriesRepositoryImpl(
         return countriesApi.getAllCountries().map { it.convert() }
     }
 
-    override suspend fun searchCountryByCode(code: String): Country {
-        return countriesApi.searchCountryByCode(code).convert()
+    override suspend fun searchCountryByCode(code: String): List<Country> {
+        return countriesApi.searchCountryByCode(code).map { it.convert() }
     }
 
 }

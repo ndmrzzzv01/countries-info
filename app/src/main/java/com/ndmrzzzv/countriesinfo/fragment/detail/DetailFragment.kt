@@ -1,11 +1,15 @@
 package com.ndmrzzzv.countriesinfo.fragment.detail
 
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.ndmrzzzv.countriesinfo.databinding.FragmentDetailBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -23,8 +27,49 @@ class DetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDetailBinding.inflate(inflater, container, false)
-
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.getInfoAboutCountry(args.code)
+
+        initObservers()
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun initObservers() {
+        binding.apply {
+            viewModel.country.observe(viewLifecycleOwner) { listOfCountry ->
+                val country = listOfCountry[0]
+                Glide.with(requireContext()).load(country.image).into(imgOfFlag)
+                Glide.with(requireContext()).load(country.coatOfArms).into(imgOfCoatOfArms)
+
+                tvCountryNameCommon.text = country.name
+                tvOfficialName.text = country.officialName
+                tvCapital.text = "Capital: ${country.capital ?: " -"}"
+                tvPopulationName.text = "Population: ${country.population}"
+                tvSurfaceName.text = "Area: ${country.surface}"
+
+                var languages = ""
+                for (pair in country.languages ?: mapOf()) {
+                    languages += "(${pair.value}) "
+                }
+                tvLanguageName.text = "Languages: $languages"
+
+                var timeZone = ""
+                for (item in country.timeZone ?: listOf()) {
+                    timeZone += "[${item}] "
+                }
+                tvTimezone.text = "Timezones: $timeZone"
+
+                tvGoogleMapLink.setOnClickListener {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(country.googleMapLink))
+                    startActivity(intent)
+                }
+
+            }
+        }
     }
 
     override fun onDestroyView() {
