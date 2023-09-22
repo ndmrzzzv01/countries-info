@@ -9,7 +9,7 @@ data class Country(
     val officialName: String?,
     val coatOfArms: String?,
     val code: String?,
-//    val languages: List<String>?,
+    val languages: Map<String, String>?,
     val googleMapLink: String?,
     val timeZone: List<String>?,
     val countriesNear: List<String>?

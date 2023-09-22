@@ -10,11 +10,11 @@ class CountriesRepositoryImpl(
 ) : CountriesRepository {
 
     override suspend fun getAllCountries(): List<Country> {
-        return countriesApi.getAllCountries().convert()
+        return countriesApi.getAllCountries().map { it.convert() }
     }
 
-    override suspend fun searchCountryByCode(code: String): Any {
-        TODO("Not yet implemented")
+    override suspend fun searchCountryByCode(code: String): Country {
+        return countriesApi.searchCountryByCode(code).convert()
     }
 
 }

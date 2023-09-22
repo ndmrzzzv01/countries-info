@@ -8,19 +8,21 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.annotation.MenuRes
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ndmrzzzv.countriesinfo.R
 import com.ndmrzzzv.countriesinfo.databinding.FragmentMainListBinding
 import com.ndmrzzzv.countriesinfo.fragment.main.data.MapForSorting
+import com.ndmrzzzv.countriesinfo.fragment.main.interfaces.GoToDetailedItemListener
 import com.ndmrzzzv.countriesinfo.fragment.main.view.adapter.CountryAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainListFragment : Fragment() {
+class MainListFragment : Fragment(), GoToDetailedItemListener {
 
     private var _binding: FragmentMainListBinding? = null
     private val binding get() = _binding!!
     private val viewModel by viewModel<MainListViewModel>()
-    private val adapter = CountryAdapter(listOf())
+    private val adapter = CountryAdapter(listOf(), this)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,6 +43,14 @@ class MainListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun navigateToOneItem(code: String?) {
+        findNavController().navigate(
+            MainListFragmentDirections.actionMainListFragmentToDetailFragment(
+                code ?: ""
+            )
+        )
     }
 
     private fun initListeners() {
