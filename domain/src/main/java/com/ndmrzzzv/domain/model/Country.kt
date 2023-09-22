@@ -8,6 +8,7 @@ data class Country(
     val capital: List<String>?,
     val officialName: String?,
     val coatOfArms: String?,
+    val code: String?,
 //    val languages: List<String>?,
     val googleMapLink: String?,
     val timeZone: List<String>?,

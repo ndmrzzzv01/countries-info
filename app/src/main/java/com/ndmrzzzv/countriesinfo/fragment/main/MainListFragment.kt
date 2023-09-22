@@ -1,6 +1,7 @@
 package com.ndmrzzzv.countriesinfo.fragment.main
 
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,6 +46,14 @@ class MainListFragment : Fragment() {
     private fun initListeners() {
         binding.btnFilter.setOnClickListener {
             showMenu(it, R.menu.sort_menu)
+        }
+
+        binding.etSearch.setOnKeyListener { _, keyCode, keyEvent ->
+            if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                viewModel.searchByName(binding.etSearch.text.toString())
+                return@setOnKeyListener true
+            }
+            return@setOnKeyListener false
         }
     }
 

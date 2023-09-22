@@ -6,8 +6,6 @@ interface CountriesRepository {
 
     suspend fun getAllCountries(): List<Country>
 
-    suspend fun searchCountryByName(name: String): Any
-
     suspend fun searchCountryByCode(code: String): Any
 
 }

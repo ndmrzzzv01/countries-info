@@ -16,9 +16,13 @@ class MainListViewModel(
     private val _countries = MutableLiveData<List<Country>?>()
     val countries: LiveData<List<Country>?> = _countries
 
+    private var listOfAllCountries = listOf<Country>()
+
     init {
         viewModelScope.launch {
-            _countries.value = getAllCountriesUseCase.invoke()
+            val result = getAllCountriesUseCase.invoke()
+            _countries.value = result
+            listOfAllCountries = result
         }
     }
 
@@ -33,6 +37,15 @@ class MainListViewModel(
             SortType.SURFACE_DOWN -> listOfCountry?.sortedByDescending { it.surface }
         }
         _countries.value = filteredList
+    }
+
+    fun searchByName(name: String) {
+        viewModelScope.launch {
+            _countries.value = if (name.isNotEmpty()) countries.value?.filter {
+                it.name?.lowercase()?.contains(name.lowercase()) == true
+            }
+            else listOfAllCountries
+        }
     }
 
 }

@@ -2,6 +2,7 @@ package com.ndmrzzzv.data.api
 
 import com.ndmrzzzv.data.data.Country
 import retrofit2.http.GET
+import retrofit2.http.Path
 
 interface CountriesApi {
 
