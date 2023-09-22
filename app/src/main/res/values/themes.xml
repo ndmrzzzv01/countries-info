@@ -10,5 +10,13 @@
         <item name="android:statusBarColor">@color/black</item>
     </style>
 
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">2dp</item>
+        <item name="android:background">?android:attr/listDivider</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+    </style>
+
     <style name="Theme.CountriesInfo" parent="Base.Theme.CountriesInfo" />
 </resources>

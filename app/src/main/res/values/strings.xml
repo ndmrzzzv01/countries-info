@@ -8,4 +8,8 @@
     <string name="sort_by_population_high_to_low">Sort by population (high to low)</string>
     <string name="sort_by_surface_low_to_high">Sort by surface (low to high)</string>
     <string name="sort_by_surface_high_to_low">Sort by surface (high to low)</string>
+    <string name="img_of_coat_of_arms">img_of_coat_of_arms</string>
+    <string name="img_map">img_map</string>
+    <string name="click_on_this_link_to_open_the_desired_country_on_google_map"><u>Click on this link to open the desired country on Google Map</u></string>
+    <string name="neighboring_countries">Neighboring countries</string>
 </resources>
