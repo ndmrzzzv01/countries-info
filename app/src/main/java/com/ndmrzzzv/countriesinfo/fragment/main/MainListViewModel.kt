@@ -1,5 +1,6 @@
 package com.ndmrzzzv.countriesinfo.fragment.main
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,68 +9,69 @@ import com.ndmrzzzv.countriesinfo.feature.InternetChecker
 import com.ndmrzzzv.countriesinfo.fragment.main.data.SortType
 import com.ndmrzzzv.domain.model.Country
 import com.ndmrzzzv.domain.usecase.GetAllCountriesUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.system.measureTimeMillis
 
 class MainListViewModel(
     private val getAllCountriesUseCase: GetAllCountriesUseCase,
     private val internetChecker: InternetChecker
 ) : ViewModel() {
 
-    private val _countries = MutableLiveData<List<Country>?>()
-    val countries: LiveData<List<Country>?> = _countries
+    private val _sortedCountries = MutableLiveData<List<Country>?>()
+    val sortedCountries: LiveData<List<Country>?> = _sortedCountries
 
-//    private val _sortType = MutableLiveData<List<Country>?>()
-//    val sortType: LiveData<List<Country>?> = _sortType
-//
-//    private val _searchText = MutableLiveData<List<Country>?>()
-//    val searchText: LiveData<List<Country>?> = _searchText
+    private val _sortType = MutableLiveData<SortType>()
+    private val _searchText = MutableLiveData<String>()
+    private var allCountries = listOf<Country>()
 
-    private var listOfAllCountries = listOf<Country>()
+    init {
+        getAllCountries()
+    }
 
     fun getAllCountries() {
         viewModelScope.launch {
             if (internetChecker.checkConnection()) {
                 val result = getAllCountriesUseCase.invoke()
-                _countries.value = result
-                listOfAllCountries = result
+                _sortedCountries.value = result
+                allCountries = result
             } else {
-                _countries.value = null
+                _sortedCountries.value = null
             }
         }
     }
 
-    fun setSortType(type: SortType) {
-//        sortType.value = type
-//        applySort()
-
-        val listOfCountry = countries.value
-        val filteredList: List<Country>? = when (type) {
-            SortType.NAME_A_Z -> listOfCountry?.sortedBy { it.name }
-            SortType.NAME_Z_A -> listOfCountry?.sortedByDescending { it.name }
-            SortType.POPULATION_UP -> listOfCountry?.sortedBy { it.population }
-            SortType.POPULATION_DOWN -> listOfCountry?.sortedByDescending { it.population }
-            SortType.SURFACE_UP -> listOfCountry?.sortedBy { it.surface }
-            SortType.SURFACE_DOWN -> listOfCountry?.sortedByDescending { it.surface }
-        }
-        _countries.value = filteredList
+    fun setTypeSort(type: SortType) {
+        _sortType.value = type
+        applySort()
     }
 
     fun setSearchText(searchText: String) {
-//        searchText.value = searchTextString
-//        applySort()
-
-        viewModelScope.launch {
-            _countries.value = if (searchText.isNotEmpty()) countries.value?.filter {
-                it.name?.lowercase()?.contains(searchText.lowercase()) == true
-            }
-            else listOfAllCountries
-        }
+        _searchText.value = searchText
+        applySort()
     }
 
-//    private fun applySort() {
-//        viewModelScope.launch {
-//
-//        }
-//    }
+    private fun applySort() {
+        viewModelScope.launch(Dispatchers.Default) {
+            var sortedList = when (_sortType.value) {
+                SortType.NAME_A_Z -> allCountries.sortedBy { it.name }
+                SortType.NAME_Z_A -> allCountries.sortedByDescending { it.name }
+                SortType.POPULATION_UP -> allCountries.sortedBy { it.population }
+                SortType.POPULATION_DOWN -> allCountries.sortedByDescending { it.population }
+                SortType.SURFACE_UP -> allCountries.sortedBy { it.surface }
+                SortType.SURFACE_DOWN -> allCountries.sortedByDescending { it.surface }
+                else -> allCountries
+            }
+
+            val searchText = _searchText.value
+            if (searchText?.isNotEmpty() == true) {
+                sortedList = sortedList.filter {
+                    it.name?.lowercase()?.contains(searchText.lowercase()) == true
+                }
+            }
+
+            _sortedCountries.postValue(sortedList)
+        }
+    }
 
 }

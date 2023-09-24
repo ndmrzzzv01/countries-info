@@ -75,45 +75,42 @@ class DetailFragment : Fragment(), OnCodeClickListener {
     @SuppressLint("SetTextI18n")
     fun initObservers() {
         binding.apply {
-            viewModel.country.observe(viewLifecycleOwner) { listOfCountry ->
-                if (listOfCountry == null) {
+            viewModel.country.observe(viewLifecycleOwner) { country ->
+                if (country == null) {
                     loading?.hideLoading()
                     showViewsIfNoInternet()
                     return@observe
                 }
 
-                if (listOfCountry.isNotEmpty()) {
-                    loading?.hideLoading()
-                    binding.emptyBack.visibility = View.GONE
-                    val country = listOfCountry[0]
-                    Glide.with(requireContext()).load(country.image).into(imgOfFlag)
-                    Glide.with(requireContext()).load(country.coatOfArms).into(imgOfCoatOfArms)
+                loading?.hideLoading()
+                binding.emptyBack.visibility = View.GONE
+                Glide.with(requireContext()).load(country.image).into(imgOfFlag)
+                Glide.with(requireContext()).load(country.coatOfArms).into(imgOfCoatOfArms)
 
-                    tvCountryNameCommon.text = country.name
-                    tvOfficialName.text = country.officialName
-                    tvCapital.text = "Capital: ${country.capital ?: " -"}"
-                    tvPopulationName.text = "Population: ${country.population}"
-                    tvSurfaceName.text = "Area: ${country.surface}"
+                tvCountryNameCommon.text = country.name
+                tvOfficialName.text = country.officialName
+                tvCapital.text = "Capital: ${country.capital ?: " -"}"
+                tvPopulationName.text = "Population: ${country.population}"
+                tvSurfaceName.text = "Area: ${country.surface}"
 
-                    var languages = ""
-                    for (pair in country.languages ?: mapOf()) {
-                        languages += "(${pair.value}) "
-                    }
-                    tvLanguageName.text = "Languages: $languages"
-
-                    var timeZone = ""
-                    for (item in country.timeZone ?: listOf()) {
-                        timeZone += "[${item}] "
-                    }
-                    tvTimezone.text = "Timezones: $timeZone"
-
-                    tvGoogleMapLink.setOnClickListener {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(country.googleMapLink))
-                        startActivity(intent)
-                    }
-
-                    adapter.setList(country.countriesNear)
+                var languages = ""
+                for (pair in country.languages ?: mapOf()) {
+                    languages += "(${pair.value}) "
                 }
+                tvLanguageName.text = "Languages: $languages"
+
+                var timeZone = ""
+                for (item in country.timeZone ?: listOf()) {
+                    timeZone += "[${item}] "
+                }
+                tvTimezone.text = "Timezones: $timeZone"
+
+                tvGoogleMapLink.setOnClickListener {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(country.googleMapLink))
+                    startActivity(intent)
+                }
+
+                adapter.setList(country.countriesNear)
             }
         }
     }

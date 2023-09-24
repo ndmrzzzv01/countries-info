@@ -43,7 +43,6 @@ class MainListFragment : Fragment(), GoToDetailedItemListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getAllCountries()
         initListeners()
         initRecyclerView()
         initObservers()
@@ -88,7 +87,7 @@ class MainListFragment : Fragment(), GoToDetailedItemListener {
     }
 
     private fun initObservers() {
-        viewModel.countries.observe(viewLifecycleOwner) {
+        viewModel.sortedCountries.observe(viewLifecycleOwner) {
             loading?.hideLoading()
             if (it == null) {
                 showViewsIfNoInternet()
@@ -117,7 +116,7 @@ class MainListFragment : Fragment(), GoToDetailedItemListener {
             val map = MapForSorting.get()
             for (pair in map) {
                 if (item.itemId == pair.key) {
-                    viewModel.setSortType(pair.value)
+                    viewModel.setTypeSort(pair.value)
                 }
             }
             return@setOnMenuItemClickListener true

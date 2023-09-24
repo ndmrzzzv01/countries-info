@@ -14,13 +14,13 @@ class DetailViewModel(
     private val internetChecker: InternetChecker
 ) : ViewModel() {
 
-    private val _country = MutableLiveData<List<Country>?>()
-    val country: LiveData<List<Country>?> = _country
+    private val _country = MutableLiveData<Country?>()
+    val country: LiveData<Country?> = _country
 
     fun getInfoAboutCountry(code: String) {
         viewModelScope.launch {
             if (internetChecker.checkConnection()) {
-                _country.value = searchCountriesByCodeUseCase.invoke(code)
+                _country.value = searchCountriesByCodeUseCase.invoke(code).getOrNull(0)
             } else {
                 _country.value = null
             }
