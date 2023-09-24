@@ -1,5 +1,6 @@
 package com.ndmrzzzv.countriesinfo.fragment.main
 
+import android.content.Context
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ndmrzzzv.countriesinfo.R
 import com.ndmrzzzv.countriesinfo.databinding.FragmentMainListBinding
+import com.ndmrzzzv.countriesinfo.feature.LoadingListener
 import com.ndmrzzzv.countriesinfo.fragment.main.data.MapForSorting
 import com.ndmrzzzv.countriesinfo.fragment.main.interfaces.GoToDetailedItemListener
 import com.ndmrzzzv.countriesinfo.fragment.main.view.adapter.CountryAdapter
@@ -22,7 +24,13 @@ class MainListFragment : Fragment(), GoToDetailedItemListener {
     private var _binding: FragmentMainListBinding? = null
     private val binding get() = _binding!!
     private val viewModel by viewModel<MainListViewModel>()
+    private var loading: LoadingListener? = null
     private val adapter = CountryAdapter(listOf(), this)
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        loading = context as LoadingListener
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,6 +43,7 @@ class MainListFragment : Fragment(), GoToDetailedItemListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.getAllCountries()
         initListeners()
         initRecyclerView()
         initObservers()
@@ -45,7 +54,13 @@ class MainListFragment : Fragment(), GoToDetailedItemListener {
         _binding = null
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        loading = null
+    }
+
     override fun navigateToOneItem(code: String?) {
+        loading?.showLoading()
         findNavController().navigate(
             MainListFragmentDirections.actionMainListFragmentToDetailFragment(
                 code ?: ""
@@ -60,7 +75,7 @@ class MainListFragment : Fragment(), GoToDetailedItemListener {
 
         binding.etSearch.setOnKeyListener { _, keyCode, keyEvent ->
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                viewModel.searchByName(binding.etSearch.text.toString())
+                viewModel.setSearchText(binding.etSearch.text.toString())
                 return@setOnKeyListener true
             }
             return@setOnKeyListener false
@@ -74,7 +89,23 @@ class MainListFragment : Fragment(), GoToDetailedItemListener {
 
     private fun initObservers() {
         viewModel.countries.observe(viewLifecycleOwner) {
-            adapter.setList(it ?: listOf())
+            loading?.hideLoading()
+            if (it == null) {
+                showViewsIfNoInternet()
+                return@observe
+            }
+
+            adapter.setList(it)
+            binding.emptyBack.visibility = View.GONE
+        }
+    }
+
+    private fun showViewsIfNoInternet() {
+        binding.apply {
+            emptyBack.visibility = View.VISIBLE
+            btnRetry.setOnClickListener {
+                viewModel.getAllCountries()
+            }
         }
     }
 
@@ -86,7 +117,7 @@ class MainListFragment : Fragment(), GoToDetailedItemListener {
             val map = MapForSorting.get()
             for (pair in map) {
                 if (item.itemId == pair.key) {
-                    viewModel.sort(pair.value)
+                    viewModel.setSortType(pair.value)
                 }
             }
             return@setOnMenuItemClickListener true

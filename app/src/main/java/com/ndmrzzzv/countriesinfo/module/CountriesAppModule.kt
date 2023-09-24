@@ -1,9 +1,11 @@
 package com.ndmrzzzv.countriesinfo.module
 
+import com.ndmrzzzv.countriesinfo.feature.InternetChecker
 import com.ndmrzzzv.countriesinfo.fragment.detail.DetailViewModel
 import com.ndmrzzzv.countriesinfo.fragment.main.MainListViewModel
 import com.ndmrzzzv.domain.usecase.GetAllCountriesUseCase
 import com.ndmrzzzv.domain.usecase.SearchCountriesByCodeUseCase
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -13,8 +15,10 @@ val appModule = module {
 
     single { SearchCountriesByCodeUseCase(get()) }
 
-    viewModel { MainListViewModel(get()) }
+    single { InternetChecker(androidContext()) }
 
-    viewModel { DetailViewModel(get()) }
+    viewModel { MainListViewModel(get(), get()) }
+
+    viewModel { DetailViewModel(get(), get()) }
 
 }

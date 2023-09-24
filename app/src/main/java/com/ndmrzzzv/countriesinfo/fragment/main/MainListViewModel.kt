@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ndmrzzzv.countriesinfo.feature.InternetChecker
 import com.ndmrzzzv.countriesinfo.fragment.main.data.SortType
 import com.ndmrzzzv.domain.model.Country
 import com.ndmrzzzv.domain.usecase.GetAllCountriesUseCase
@@ -11,22 +12,36 @@ import kotlinx.coroutines.launch
 
 class MainListViewModel(
     private val getAllCountriesUseCase: GetAllCountriesUseCase,
+    private val internetChecker: InternetChecker
 ) : ViewModel() {
 
     private val _countries = MutableLiveData<List<Country>?>()
     val countries: LiveData<List<Country>?> = _countries
 
+//    private val _sortType = MutableLiveData<List<Country>?>()
+//    val sortType: LiveData<List<Country>?> = _sortType
+//
+//    private val _searchText = MutableLiveData<List<Country>?>()
+//    val searchText: LiveData<List<Country>?> = _searchText
+
     private var listOfAllCountries = listOf<Country>()
 
-    init {
+    fun getAllCountries() {
         viewModelScope.launch {
-            val result = getAllCountriesUseCase.invoke()
-            _countries.value = result
-            listOfAllCountries = result
+            if (internetChecker.checkConnection()) {
+                val result = getAllCountriesUseCase.invoke()
+                _countries.value = result
+                listOfAllCountries = result
+            } else {
+                _countries.value = null
+            }
         }
     }
 
-    fun sort(type: SortType) {
+    fun setSortType(type: SortType) {
+//        sortType.value = type
+//        applySort()
+
         val listOfCountry = countries.value
         val filteredList: List<Country>? = when (type) {
             SortType.NAME_A_Z -> listOfCountry?.sortedBy { it.name }
@@ -39,13 +54,22 @@ class MainListViewModel(
         _countries.value = filteredList
     }
 
-    fun searchByName(name: String) {
+    fun setSearchText(searchText: String) {
+//        searchText.value = searchTextString
+//        applySort()
+
         viewModelScope.launch {
-            _countries.value = if (name.isNotEmpty()) countries.value?.filter {
-                it.name?.lowercase()?.contains(name.lowercase()) == true
+            _countries.value = if (searchText.isNotEmpty()) countries.value?.filter {
+                it.name?.lowercase()?.contains(searchText.lowercase()) == true
             }
             else listOfAllCountries
         }
     }
+
+//    private fun applySort() {
+//        viewModelScope.launch {
+//
+//        }
+//    }
 
 }
