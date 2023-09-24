@@ -8,21 +8,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.ndmrzzzv.countriesinfo.databinding.FragmentDetailBinding
+import com.ndmrzzzv.countriesinfo.fragment.detail.interfaces.OnCodeClickListener
 import com.ndmrzzzv.countriesinfo.fragment.detail.views.adapter.CodeAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class DetailFragment : Fragment() {
+class DetailFragment : Fragment(), OnCodeClickListener {
 
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel by viewModel<DetailViewModel>()
     private val args by navArgs<DetailFragmentArgs>()
-    private val adapter = CodeAdapter(listOf())
+    private val adapter = CodeAdapter(listOf(), this)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,6 +46,10 @@ class DetailFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun clickOnCode(code: String) {
+        findNavController().navigate(DetailFragmentDirections.actionDetailFragmentSelf(code))
     }
 
     private fun initRecyclerView() {
