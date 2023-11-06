@@ -1,8 +1,8 @@
 package com.ndmrzzzv.countriesinfo.module
 
 import com.ndmrzzzv.countriesinfo.feature.InternetChecker
-import com.ndmrzzzv.countriesinfo.fragment.detail.DetailViewModel
-import com.ndmrzzzv.countriesinfo.fragment.main.MainListViewModel
+import com.ndmrzzzv.countriesinfo.screens.detail.DetailViewModel
+import com.ndmrzzzv.countriesinfo.screens.main.MainListViewModel
 import com.ndmrzzzv.domain.usecase.GetAllCountriesUseCase
 import com.ndmrzzzv.domain.usecase.SearchCountriesByCodeUseCase
 import org.koin.android.ext.koin.androidContext

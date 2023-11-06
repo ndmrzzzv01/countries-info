@@ -1,4 +1,4 @@
-package com.ndmrzzzv.countriesinfo.fragment.detail
+package com.ndmrzzzv.countriesinfo.screens.detail
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

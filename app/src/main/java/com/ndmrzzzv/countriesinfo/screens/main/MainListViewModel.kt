@@ -1,6 +1,5 @@
-package com.ndmrzzzv.countriesinfo.fragment.main
+package com.ndmrzzzv.countriesinfo.screens.main
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,7 +10,6 @@ import com.ndmrzzzv.domain.model.Country
 import com.ndmrzzzv.domain.usecase.GetAllCountriesUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.system.measureTimeMillis
 
 class MainListViewModel(
     private val getAllCountriesUseCase: GetAllCountriesUseCase,
