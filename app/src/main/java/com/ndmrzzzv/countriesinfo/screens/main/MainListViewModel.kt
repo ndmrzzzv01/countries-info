@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ndmrzzzv.countriesinfo.feature.InternetChecker
-import com.ndmrzzzv.countriesinfo.fragment.main.data.SortType
+import com.ndmrzzzv.countriesinfo.screens.main.data.SortType
 import com.ndmrzzzv.domain.model.Country
 import com.ndmrzzzv.domain.usecase.GetAllCountriesUseCase
 import kotlinx.coroutines.Dispatchers
