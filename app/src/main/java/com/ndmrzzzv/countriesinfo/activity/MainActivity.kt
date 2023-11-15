@@ -12,8 +12,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ndmrzzzv.countriesinfo.screens.detail.CountryDetailScreen
 import com.ndmrzzzv.countriesinfo.screens.main.CountriesScreen
+import com.ndmrzzzv.countriesinfo.screens.main.MainListViewModel
 import com.ndmrzzzv.countriesinfo.screens.main.state.CountriesState
 import com.ndmrzzzv.countriesinfo.ui.theme.CountriesInfoAppTheme
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -32,11 +34,12 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
         NavHost(navController, startDestination = "countries") {
             composable(route = "countries") {
-//                val viewModel: MainListViewModel = viewModel()
-//                CountriesScreen(
-//                    CountriesState(),
-//                    onItemClick = { code -> navController.navigate("countries/$code") }
-//                )
+                val viewModel = koinViewModel<MainListViewModel>()
+                CountriesScreen(
+                    viewModel.sortedCountries.value,
+                    onItemClick = { code -> navController.navigate("countries/$code") },
+                    searchEvent = { searchString -> viewModel.setSearchText(searchString) }
+                )
             }
             composable(
                 route = "countries/country_code",
@@ -55,6 +58,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DefaultPreview() {
     CountriesInfoAppTheme {
-        CountriesScreen(CountriesState(listOf(), true)) {}
+        CountriesScreen(CountriesState(listOf(), true),
+            {}) {}
     }
 }

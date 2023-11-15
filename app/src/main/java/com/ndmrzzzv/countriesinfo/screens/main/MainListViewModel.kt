@@ -1,11 +1,13 @@
 package com.ndmrzzzv.countriesinfo.screens.main
 
-import androidx.lifecycle.LiveData
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ndmrzzzv.countriesinfo.feature.InternetChecker
 import com.ndmrzzzv.countriesinfo.screens.main.data.SortType
+import com.ndmrzzzv.countriesinfo.screens.main.state.CountriesState
 import com.ndmrzzzv.domain.model.Country
 import com.ndmrzzzv.domain.usecase.GetAllCountriesUseCase
 import kotlinx.coroutines.Dispatchers
@@ -16,8 +18,8 @@ class MainListViewModel(
     private val internetChecker: InternetChecker
 ) : ViewModel() {
 
-    private val _sortedCountries = MutableLiveData<List<Country>?>()
-    val sortedCountries: LiveData<List<Country>?> = _sortedCountries
+    private val _sortedCountries = mutableStateOf(CountriesState(listOf(), true))
+    val sortedCountries: State<CountriesState> = _sortedCountries
 
     private val _sortType = MutableLiveData<SortType>()
     private val _searchText = MutableLiveData<String>()
@@ -27,14 +29,20 @@ class MainListViewModel(
         getAllCountries()
     }
 
-    fun getAllCountries() {
+    private fun getAllCountries() {
         viewModelScope.launch {
             if (internetChecker.checkConnection()) {
                 val result = getAllCountriesUseCase.invoke()
-                _sortedCountries.value = result
+                _sortedCountries.value = _sortedCountries.value.copy(
+                    countries = result, isLoading = false
+                )
                 allCountries = result
             } else {
-                _sortedCountries.value = null
+                _sortedCountries.value = _sortedCountries.value.copy(
+                    countries = listOf(),
+                    isLoading = false,
+                    error = "You don`t have Internet connection"
+                )
             }
         }
     }
@@ -68,7 +76,9 @@ class MainListViewModel(
                 }
             }
 
-            _sortedCountries.postValue(sortedList)
+            _sortedCountries.value = _sortedCountries.value.copy(
+                countries = sortedList, isLoading = false
+            )
         }
     }
 
