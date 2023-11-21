@@ -38,7 +38,8 @@ class MainActivity : ComponentActivity() {
                 CountriesScreen(
                     viewModel.sortedCountries.value,
                     onItemClick = { code -> navController.navigate("countries/$code") },
-                    searchEvent = { searchString -> viewModel.setSearchText(searchString) }
+                    searchEvent = { searchString -> viewModel.setSearchText(searchString) },
+                    sortEvent = { type -> viewModel.setTypeSort(type) }
                 )
             }
             composable(
