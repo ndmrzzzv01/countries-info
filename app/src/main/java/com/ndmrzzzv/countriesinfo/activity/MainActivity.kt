@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ndmrzzzv.countriesinfo.screens.detail.CountryDetailScreen
+import com.ndmrzzzv.countriesinfo.screens.detail.DetailViewModel
 import com.ndmrzzzv.countriesinfo.screens.main.CountriesScreen
 import com.ndmrzzzv.countriesinfo.screens.main.MainListViewModel
 import com.ndmrzzzv.countriesinfo.screens.main.state.CountriesState
@@ -32,7 +33,10 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun CountriesApp() {
         val navController = rememberNavController()
-        NavHost(navController, startDestination = "countries") {
+        NavHost(
+            navController,
+            startDestination = "countries"
+        ) {
             composable(route = "countries") {
                 val viewModel = koinViewModel<MainListViewModel>()
                 CountriesScreen(
@@ -43,12 +47,21 @@ class MainActivity : ComponentActivity() {
                 )
             }
             composable(
-                route = "countries/country_code",
+                route = "countries/{country_code}",
                 arguments = listOf(navArgument("country_code") {
                     type = NavType.StringType
                 })
             ) {
-                CountryDetailScreen()
+                val viewModel = koinViewModel<DetailViewModel>()
+                CountryDetailScreen(
+                    viewModel.country.value,
+                    openGoogleMap = { url ->
+                        viewModel.openGoogleMapLink(this@MainActivity, url)
+                    },
+                    onCodeClick = { code ->
+                        navController.navigate("countries/$code")
+                    }
+                )
             }
         }
     }
