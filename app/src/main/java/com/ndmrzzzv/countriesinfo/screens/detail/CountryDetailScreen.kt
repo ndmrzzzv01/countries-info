@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
@@ -64,7 +66,7 @@ fun CountryDetailScreen(
                 modifier = Modifier
                     .width(80.dp)
                     .height(80.dp)
-                    .padding(top = 8.dp)
+                    .padding(top = 8.dp, bottom = 8.dp)
                     .constrainAs(secondImage) {
                         top.linkTo(mainImage.bottom)
                         end.linkTo(parent.end)
@@ -88,14 +90,16 @@ fun CountryDetailScreen(
                         top.linkTo(countryName.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(secondImage.start)
+                        bottom.linkTo(divider.top)
 
+                        height = Dimension.wrapContent
                         width = Dimension.fillToConstraints
                     })
 
             Divider(thickness = 1.dp, color = Color.Gray, modifier = Modifier
                 .padding(8.dp, 8.dp, 8.dp)
                 .constrainAs(divider) {
-                    top.linkTo(secondImage.bottom)
+                    top.linkTo(officialName.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 })
