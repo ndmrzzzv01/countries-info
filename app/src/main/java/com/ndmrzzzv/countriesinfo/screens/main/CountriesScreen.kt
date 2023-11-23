@@ -52,9 +52,10 @@ fun CountriesScreen(
     onItemClick: (code: String) -> Unit = {},
     searchEvent: (searchString: String) -> Unit = {},
     sortEvent: (type: SortType) -> Unit = {},
-    getAllCountriesEvent: () -> Unit = {}
+    getAllCountriesEvent: () -> Unit = {},
+    savedString: String
 ) {
-    val textValue = remember { mutableStateOf("") }
+    val textValue = remember { mutableStateOf(savedString) }
     var expanded by remember { mutableStateOf(false) }
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (btnRefs, dropdown, textFieldRefs, lazyColumnRefs, loading, tvError, btnRetry) = createRefs()

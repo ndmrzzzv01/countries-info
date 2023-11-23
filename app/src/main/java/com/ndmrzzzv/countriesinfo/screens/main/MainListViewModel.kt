@@ -2,6 +2,7 @@ package com.ndmrzzzv.countriesinfo.screens.main
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,6 +24,7 @@ class MainListViewModel(
 
     private val _sortType = MutableLiveData<SortType>()
     private val _searchText = MutableLiveData<String>()
+    val searchText: LiveData<String> = _searchText
     private var allCountries = listOf<Country>()
 
     init {

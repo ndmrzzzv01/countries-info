@@ -221,34 +221,37 @@ fun CountryDetailScreen(
                             end.linkTo(parent.end)
                         })
 
-                    Text(
-                        text = "Neighboring countries", fontSize = 16.sp, modifier = Modifier
-                            .padding(16.dp, 8.dp, 8.dp)
-                            .constrainAs(neighboringCountriesTitle) {
-                                top.linkTo(divider3.bottom)
+                    val countriesNear = country.countriesNear
+                    if (!countriesNear.isNullOrEmpty()) {
+                        Text(
+                            text = "Neighboring countries", fontSize = 16.sp, modifier = Modifier
+                                .padding(16.dp, 8.dp, 8.dp)
+                                .constrainAs(neighboringCountriesTitle) {
+                                    top.linkTo(divider3.bottom)
+                                    start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+
+                                    width = Dimension.fillToConstraints
+                                }, textAlign = TextAlign.Center
+                        )
+
+                        LazyRow(modifier = Modifier
+                            .padding(8.dp)
+                            .constrainAs(listOfNeighboringCountries) {
                                 start.linkTo(parent.start)
+                                top.linkTo(neighboringCountriesTitle.bottom)
                                 end.linkTo(parent.end)
 
-                                width = Dimension.fillToConstraints
-                            }, textAlign = TextAlign.Center
-                    )
+                                width = Dimension.matchParent
+                            }) {
 
-                    LazyRow(modifier = Modifier
-                        .padding(8.dp)
-                        .constrainAs(listOfNeighboringCountries) {
-                            start.linkTo(parent.start)
-                            top.linkTo(neighboringCountriesTitle.bottom)
-                            end.linkTo(parent.end)
 
-                            width = Dimension.matchParent
-                        }) {
-                        val countriesNear = country.countriesNear
-                        if (!countriesNear.isNullOrEmpty()) {
                             items(countriesNear) {
                                 ItemCode(code = it) { code ->
                                     onCodeClick(code)
                                 }
                             }
+
                         }
                     }
                 }

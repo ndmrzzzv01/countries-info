@@ -40,11 +40,12 @@ class MainActivity : ComponentActivity() {
             composable(route = "countries") {
                 val viewModel = koinViewModel<MainListViewModel>()
                 CountriesScreen(
-                    viewModel.sortedCountries.value,
+                    state = viewModel.sortedCountries.value,
                     onItemClick = { code -> navController.navigate("countries/$code") },
                     searchEvent = { searchString -> viewModel.setSearchText(searchString) },
                     sortEvent = { type -> viewModel.setTypeSort(type) },
-                    getAllCountriesEvent = { viewModel.getAllCountries() }
+                    getAllCountriesEvent = { viewModel.getAllCountries() },
+                    savedString = viewModel.searchText.value ?: ""
                 )
             }
             composable(
@@ -55,7 +56,7 @@ class MainActivity : ComponentActivity() {
             ) {
                 val viewModel = koinViewModel<DetailViewModel>()
                 CountryDetailScreen(
-                    viewModel.country.value,
+                    countryState = viewModel.country.value,
                     openGoogleMap = { url ->
                         viewModel.openGoogleMapLink(this@MainActivity, url)
                     },
