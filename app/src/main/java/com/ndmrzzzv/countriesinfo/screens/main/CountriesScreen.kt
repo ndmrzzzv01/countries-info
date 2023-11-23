@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -27,9 +29,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -47,12 +51,13 @@ fun CountriesScreen(
     state: CountriesState,
     onItemClick: (code: String) -> Unit = {},
     searchEvent: (searchString: String) -> Unit = {},
-    sortEvent: (type: SortType) -> Unit = {}
+    sortEvent: (type: SortType) -> Unit = {},
+    getAllCountriesEvent: () -> Unit = {}
 ) {
     val textValue = remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        val (btnRefs, dropdown, textFieldRefs, lazyColumnRefs, loading) = createRefs()
+        val (btnRefs, dropdown, textFieldRefs, lazyColumnRefs, loading, tvError, btnRetry) = createRefs()
 
         Image(
             bitmap = ImageBitmap.imageResource(id = R.drawable.sort),
@@ -105,37 +110,69 @@ fun CountriesScreen(
                 }
         )
 
-        LazyColumn(
-            contentPadding = PaddingValues(vertical = 8.dp, horizontal = 8.dp),
-            modifier = Modifier.constrainAs(lazyColumnRefs) {
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                bottom.linkTo(parent.bottom)
-                top.linkTo(btnRefs.bottom)
+        when (state) {
+            is CountriesState.LoadedData -> {
+                LazyColumn(
+                    contentPadding = PaddingValues(vertical = 8.dp, horizontal = 8.dp),
+                    modifier = Modifier.constrainAs(lazyColumnRefs) {
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom)
+                        top.linkTo(btnRefs.bottom)
 
-                height = Dimension.fillToConstraints
-                width = Dimension.fillToConstraints
+                        height = Dimension.fillToConstraints
+                        width = Dimension.fillToConstraints
+                    }
+                ) {
+                    items(state.listOfCountries) { country ->
+                        CountryItem(country) {
+                            onItemClick(it)
+                        }
+                    }
+                }
             }
-        ) {
-            items(state.countries) { country ->
-                CountryItem(country) {
-                    onItemClick(it)
+            is CountriesState.Loading -> {
+                CircularProgressIndicator(
+                    Modifier
+                        .semantics {
+                            this.contentDescription = "Progress Indicator"
+                        }
+                        .constrainAs(loading) {
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
+                )
+            }
+            is CountriesState.LoadingFailed -> {
+                Text(
+                    text = state.message,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.constrainAs(tvError) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        bottom.linkTo(parent.bottom)
+                        end.linkTo(parent.end)
+
+                        width = Dimension.matchParent
+                    })
+                Button(
+                    onClick = { getAllCountriesEvent() },
+                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.purple_200)),
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .constrainAs(btnRetry) {
+                            top.linkTo(tvError.bottom)
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                        }
+                ) {
+                    Text(text = "Retry")
                 }
             }
         }
 
-        if (state.isLoading) CircularProgressIndicator(
-            Modifier
-                .semantics {
-                    this.contentDescription = "Progress Indicator"
-                }
-                .constrainAs(loading) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-        )
     }
 }
 

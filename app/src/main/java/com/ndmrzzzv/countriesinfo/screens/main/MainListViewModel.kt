@@ -18,7 +18,7 @@ class MainListViewModel(
     private val internetChecker: InternetChecker
 ) : ViewModel() {
 
-    private val _sortedCountries = mutableStateOf(CountriesState(listOf(), true))
+    private val _sortedCountries = mutableStateOf<CountriesState>(CountriesState.Loading)
     val sortedCountries: State<CountriesState> = _sortedCountries
 
     private val _sortType = MutableLiveData<SortType>()
@@ -29,20 +29,14 @@ class MainListViewModel(
         getAllCountries()
     }
 
-    private fun getAllCountries() {
+    fun getAllCountries() {
         viewModelScope.launch {
             if (internetChecker.checkConnection()) {
                 val result = getAllCountriesUseCase.invoke()
-                _sortedCountries.value = _sortedCountries.value.copy(
-                    countries = result, isLoading = false
-                )
+                _sortedCountries.value = CountriesState.LoadedData(result)
                 allCountries = result
             } else {
-                _sortedCountries.value = _sortedCountries.value.copy(
-                    countries = listOf(),
-                    isLoading = false,
-                    error = "You don`t have Internet connection"
-                )
+                _sortedCountries.value = CountriesState.LoadingFailed("You don`t have internet connection")
             }
         }
     }
@@ -76,9 +70,7 @@ class MainListViewModel(
                 }
             }
 
-            _sortedCountries.value = _sortedCountries.value.copy(
-                countries = sortedList, isLoading = false
-            )
+            _sortedCountries.value = CountriesState.LoadedData(sortedList)
         }
     }
 

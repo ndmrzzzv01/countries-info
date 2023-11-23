@@ -19,23 +19,20 @@ class DetailViewModel(
     private val stateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _country = mutableStateOf(CountryDetailState(null, true))
+    private val _country = mutableStateOf<CountryDetailState>(CountryDetailState.Loading)
     val country: State<CountryDetailState> = _country
 
     init {
+        loadInfoAboutCountry()
+    }
+
+    fun loadInfoAboutCountry() {
         val code = stateHandle.get<String>("country_code") ?: ""
         viewModelScope.launch {
             _country.value = if (internetChecker.checkConnection()) {
-                _country.value.copy(
-                    country = searchCountriesByCodeUseCase.invoke(code).getOrNull(0),
-                    isLoading = false
-                )
+                CountryDetailState.LoadedData(searchCountriesByCodeUseCase.invoke(code).getOrNull(0))
             } else {
-                _country.value.copy(
-                    country = null,
-                    isLoading = false,
-                    error = "You don`t have Internet connection"
-                )
+                CountryDetailState.LoadingFailed("You don`t have Internet connection")
             }
         }
     }

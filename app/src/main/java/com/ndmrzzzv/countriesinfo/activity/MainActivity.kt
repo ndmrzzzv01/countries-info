@@ -43,7 +43,8 @@ class MainActivity : ComponentActivity() {
                     viewModel.sortedCountries.value,
                     onItemClick = { code -> navController.navigate("countries/$code") },
                     searchEvent = { searchString -> viewModel.setSearchText(searchString) },
-                    sortEvent = { type -> viewModel.setTypeSort(type) }
+                    sortEvent = { type -> viewModel.setTypeSort(type) },
+                    getAllCountriesEvent = { viewModel.getAllCountries() }
                 )
             }
             composable(
@@ -60,6 +61,9 @@ class MainActivity : ComponentActivity() {
                     },
                     onCodeClick = { code ->
                         navController.navigate("countries/$code")
+                    },
+                    loadCountryAgainEvent = {
+                        viewModel.loadInfoAboutCountry()
                     }
                 )
             }
@@ -72,7 +76,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DefaultPreview() {
     CountriesInfoAppTheme {
-        CountriesScreen(CountriesState(listOf(), true),
-            {}) {}
+//        CountriesScreen(CountriesState(listOf(), true),
+//            {}) {}
     }
 }
