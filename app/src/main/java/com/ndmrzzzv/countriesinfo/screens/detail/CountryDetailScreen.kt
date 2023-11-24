@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -22,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.semantics.contentDescription
@@ -42,7 +45,9 @@ fun CountryDetailScreen(
     onCodeClick: (code: String?) -> Unit = {},
     loadCountryAgainEvent: () -> Unit = {}
 ) {
-    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+    ConstraintLayout(modifier = Modifier
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState())) {
         val (mainImage, secondImage, countryName, officialName, divider,
             capital, population, surface, language, divider2,
             timezone, imgGoogle, tvGoogleMap, divider3, neighboringCountriesTitle,
@@ -56,15 +61,15 @@ fun CountryDetailScreen(
                     AsyncImage(
                         model = country.image,
                         contentDescription = "Main image",
-                        Modifier
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier
                             .constrainAs(mainImage) {
                                 start.linkTo(parent.start)
                                 top.linkTo(parent.top)
                                 end.linkTo(parent.end)
 
                                 width = Dimension.matchParent
-                            }
-                            .defaultMinSize(minHeight = 100.dp))
+                            }.defaultMinSize(minHeight = 200.dp))
 
                     AsyncImage(
                         model = country.coatOfArms,
