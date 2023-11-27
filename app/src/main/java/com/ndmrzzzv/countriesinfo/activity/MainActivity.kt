@@ -14,7 +14,6 @@ import com.ndmrzzzv.countriesinfo.screens.detail.CountryDetailScreen
 import com.ndmrzzzv.countriesinfo.screens.detail.DetailViewModel
 import com.ndmrzzzv.countriesinfo.screens.main.CountriesScreen
 import com.ndmrzzzv.countriesinfo.screens.main.MainListViewModel
-import com.ndmrzzzv.countriesinfo.screens.main.state.CountriesState
 import com.ndmrzzzv.countriesinfo.ui.theme.CountriesInfoAppTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -37,14 +36,17 @@ class MainActivity : ComponentActivity() {
             navController,
             startDestination = "countries"
         ) {
+            val actions = CountriesScreensNavigation()
+            actions.initializeNavController(navController)
             composable(route = "countries") {
                 val viewModel = koinViewModel<MainListViewModel>()
+                val mainActions = actions.getActions(viewModel)
                 CountriesScreen(
                     state = viewModel.sortedCountries.value,
-                    onItemClick = { code -> navController.navigate("countries/$code") },
-                    searchEvent = { searchString -> viewModel.setSearchText(searchString) },
-                    sortEvent = { type -> viewModel.setTypeSort(type) },
-                    getAllCountriesEvent = { viewModel.getAllCountries() },
+                    onItemClick = mainActions.onItemClick,
+                    searchEvent = mainActions.searchEvent,
+                    sortEvent = mainActions.sortEvent,
+                    getAllCountriesEvent = mainActions.getAllCountriesEvent,
                     savedString = viewModel.searchText.value ?: ""
                 )
             }
@@ -55,17 +57,12 @@ class MainActivity : ComponentActivity() {
                 })
             ) {
                 val viewModel = koinViewModel<DetailViewModel>()
+                val detailsActions = actions.getActions(viewModel, this@MainActivity)
                 CountryDetailScreen(
                     countryState = viewModel.country.value,
-                    openGoogleMap = { url ->
-                        viewModel.openGoogleMapLink(this@MainActivity, url)
-                    },
-                    onCodeClick = { code ->
-                        navController.navigate("countries/$code")
-                    },
-                    loadCountryAgainEvent = {
-                        viewModel.loadInfoAboutCountry()
-                    }
+                    openGoogleMap = detailsActions.openGoogleMap,
+                    onCodeClick = detailsActions.onCodeClick,
+                    loadCountryAgainEvent = detailsActions.loadCountryAgainEvent
                 )
             }
         }
@@ -76,8 +73,5 @@ class MainActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    CountriesInfoAppTheme {
-//        CountriesScreen(CountriesState(listOf(), true),
-//            {}) {}
-    }
+    CountriesInfoAppTheme {}
 }
