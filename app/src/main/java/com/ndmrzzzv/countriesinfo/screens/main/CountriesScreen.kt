@@ -3,8 +3,11 @@ package com.ndmrzzzv.countriesinfo.screens.main
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
@@ -57,73 +61,62 @@ fun CountriesScreen(
 ) {
     val textValue = remember { mutableStateOf(savedString) }
     var expanded by remember { mutableStateOf(false) }
-    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        val (btnRefs, dropdown, textFieldRefs, lazyColumnRefs, loading, tvError, btnRetry) = createRefs()
 
-        Image(
-            bitmap = ImageBitmap.imageResource(id = R.drawable.sort),
-            contentDescription = "Sort by",
-            Modifier
-                .padding(16.dp)
-                .width(50.dp)
-                .height(50.dp)
-                .constrainAs(btnRefs) {
-                    start.linkTo(parent.start)
-                    top.linkTo(parent.top)
-                }
-                .clickable {
-                    expanded = !expanded
-                })
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
+            verticalAlignment = Alignment.Top,
+        ) {
+            Image(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .width(55.dp)
+                    .height(55.dp)
+                    .clickable {
+                        expanded = !expanded
+                    },
+                bitmap = ImageBitmap.imageResource(id = R.drawable.sort),
+                contentDescription = "Sort by",
+            )
 
-        Box(
-            modifier = Modifier.constrainAs(dropdown) {
-                top.linkTo(btnRefs.bottom)
-                start.linkTo(parent.start)
-            }) {
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-            ) {
-                MapForSorting.get().forEach { pair ->
-                    SortDropdownItem(pairOfSort = pair) {
-                        sortEvent(it)
-                        expanded = false
+            Box {
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                ) {
+                    MapForSorting.get().forEach { pair ->
+                        SortDropdownItem(pairOfSort = pair) {
+                            sortEvent(it)
+                            expanded = false
+                        }
                     }
                 }
             }
-        }
 
-        TextField(
-            value = textValue.value,
-            label = { Text(text = "Type here to find country") },
-            onValueChange = {
-                textValue.value = it
-                searchEvent(it)
-            },
-            modifier = Modifier
-                .padding(end = 16.dp)
-                .constrainAs(textFieldRefs) {
-                    start.linkTo(btnRefs.end)
-                    top.linkTo(btnRefs.top)
-                    bottom.linkTo(btnRefs.bottom)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                }
-        )
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                value = textValue.value,
+                label = { Text(text = "Type here to find country") },
+                onValueChange = {
+                    textValue.value = it
+                    searchEvent(it)
+                },
+            )
+        }
 
         when (state) {
             is CountriesState.LoadedData -> {
                 LazyColumn(
                     contentPadding = PaddingValues(vertical = 8.dp, horizontal = 8.dp),
-                    modifier = Modifier.constrainAs(lazyColumnRefs) {
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        bottom.linkTo(parent.bottom)
-                        top.linkTo(btnRefs.bottom)
-
-                        height = Dimension.fillToConstraints
-                        width = Dimension.fillToConstraints
-                    }
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     items(state.listOfCountries) { country ->
                         CountryItem(country) {
@@ -132,49 +125,40 @@ fun CountriesScreen(
                     }
                 }
             }
-            is CountriesState.Loading -> {
-                CircularProgressIndicator(
-                    Modifier
-                        .semantics {
-                            this.contentDescription = "Progress Indicator"
-                        }
-                        .constrainAs(loading) {
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }
-                )
-            }
-            is CountriesState.LoadingFailed -> {
-                Text(
-                    text = state.message,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.constrainAs(tvError) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                        bottom.linkTo(parent.bottom)
-                        end.linkTo(parent.end)
 
-                        width = Dimension.matchParent
-                    })
-                Button(
-                    onClick = { getAllCountriesEvent() },
-                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.purple_200)),
-                    modifier = Modifier
-                        .padding(top = 8.dp)
-                        .constrainAs(btnRetry) {
-                            top.linkTo(tvError.bottom)
-                            end.linkTo(parent.end)
-                            start.linkTo(parent.start)
-                        }
+            is CountriesState.Loading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .semantics {
+                                this.contentDescription = "Progress Indicator"
+                            }
+                    )
+                }
+            }
+
+            is CountriesState.LoadingFailed -> {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "Retry")
+                    Text(
+                        text = state.message,
+                        textAlign = TextAlign.Center,
+                    )
+                    Button(
+                        onClick = { getAllCountriesEvent() },
+                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.purple_200)),
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
+                        Text(text = "Retry")
+                    }
                 }
             }
         }
-
     }
+
 }
 
 @Composable
