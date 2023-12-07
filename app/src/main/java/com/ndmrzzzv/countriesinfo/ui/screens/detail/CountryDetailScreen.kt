@@ -1,4 +1,4 @@
-package com.ndmrzzzv.countriesinfo.screens.detail
+package com.ndmrzzzv.countriesinfo.ui.screens.detail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -36,14 +36,18 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import com.ndmrzzzv.countriesinfo.R
-import com.ndmrzzzv.countriesinfo.screens.detail.state.CountryDetailState
+import com.ndmrzzzv.countriesinfo.ui.screens.detail.state.CountryDetailState
+
+data class CountryDetailScreenAction(
+    val openGoogleMap: (url: String?) -> Unit = {},
+    val onCodeClick: (code: String?) -> Unit = {},
+    val loadCountryAgainEvent: () -> Unit = {}
+)
 
 @Composable
 fun CountryDetailScreen(
     countryState: CountryDetailState,
-    openGoogleMap: (url: String?) -> Unit = {},
-    onCodeClick: (code: String?) -> Unit = {},
-    loadCountryAgainEvent: () -> Unit = {}
+    actions: CountryDetailScreenAction
 ) {
     ConstraintLayout(modifier = Modifier
         .fillMaxSize()
@@ -213,7 +217,7 @@ fun CountryDetailScreen(
                                 width = Dimension.fillToConstraints
                             }
                             .clickable {
-                                openGoogleMap(country.googleMapLink)
+                                actions.openGoogleMap(country.googleMapLink)
                             },
                         textAlign = TextAlign.Center
                     )
@@ -253,7 +257,7 @@ fun CountryDetailScreen(
 
                             items(countriesNear) {
                                 ItemCode(code = it) { code ->
-                                    onCodeClick(code)
+                                    actions.onCodeClick(code)
                                 }
                             }
 
@@ -275,7 +279,7 @@ fun CountryDetailScreen(
                         width = Dimension.matchParent
                     })
                 Button(
-                    onClick = { loadCountryAgainEvent() },
+                    onClick = { actions.loadCountryAgainEvent() },
                     colors = ButtonDefaults.buttonColors(colorResource(id = R.color.purple_200)),
                     modifier = Modifier
                         .padding(top = 8.dp)

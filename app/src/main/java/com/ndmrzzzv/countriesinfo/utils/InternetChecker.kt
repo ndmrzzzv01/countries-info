@@ -1,4 +1,4 @@
-package com.ndmrzzzv.countriesinfo.feature
+package com.ndmrzzzv.countriesinfo.utils
 
 import android.content.Context
 import android.net.ConnectivityManager

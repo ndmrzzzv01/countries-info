@@ -1,4 +1,4 @@
-package com.ndmrzzzv.countriesinfo.screens.detail.state
+package com.ndmrzzzv.countriesinfo.ui.screens.detail.state
 
 import com.ndmrzzzv.domain.model.Country
 

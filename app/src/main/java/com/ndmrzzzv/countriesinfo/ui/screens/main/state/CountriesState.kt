@@ -1,8 +1,10 @@
-package com.ndmrzzzv.countriesinfo.screens.main.state
+package com.ndmrzzzv.countriesinfo.ui.screens.main.state
 
 import com.ndmrzzzv.domain.model.Country
 
-sealed class CountriesState {
+sealed class CountriesState() {
+//sealed class CountriesState(searchRequest: String) {
+
     class LoadingFailed(val message: String) : CountriesState()
 
     class LoadedData(val listOfCountries: List<Country>) : CountriesState()

@@ -1,17 +1,17 @@
-package com.ndmrzzzv.countriesinfo.screens.main
+package com.ndmrzzzv.countriesinfo.ui.screens.main
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ndmrzzzv.countriesinfo.feature.InternetChecker
-import com.ndmrzzzv.countriesinfo.screens.main.data.SortType
-import com.ndmrzzzv.countriesinfo.screens.main.state.CountriesState
+import com.ndmrzzzv.countriesinfo.utils.InternetChecker
+import com.ndmrzzzv.countriesinfo.ui.screens.main.data.SortType
+import com.ndmrzzzv.countriesinfo.ui.screens.main.state.CountriesState
 import com.ndmrzzzv.domain.model.Country
 import com.ndmrzzzv.domain.usecase.GetAllCountriesUseCase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MainListViewModel(
@@ -19,9 +19,10 @@ class MainListViewModel(
     private val internetChecker: InternetChecker
 ) : ViewModel() {
 
-    private val _sortedCountries = mutableStateOf<CountriesState>(CountriesState.Loading)
-    val sortedCountries: State<CountriesState> = _sortedCountries
+    private val _sortedCountries = MutableStateFlow<CountriesState>(CountriesState.Loading)
+    val sortedCountries= _sortedCountries.asStateFlow()
 
+    // TODO: MutableStateFlow
     private val _sortType = MutableLiveData<SortType>()
     private val _searchText = MutableLiveData<String>()
     val searchText: LiveData<String> = _searchText
@@ -33,8 +34,9 @@ class MainListViewModel(
 
     fun getAllCountries() {
         viewModelScope.launch {
+            _sortedCountries.value = CountriesState.Loading
             if (internetChecker.checkConnection()) {
-                val result = getAllCountriesUseCase.invoke()
+                val result = getAllCountriesUseCase()
                 _sortedCountries.value = CountriesState.LoadedData(result)
                 allCountries = result
             } else {

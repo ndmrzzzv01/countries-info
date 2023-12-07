@@ -1,4 +1,4 @@
-package com.ndmrzzzv.countriesinfo.screens.main.data
+package com.ndmrzzzv.countriesinfo.ui.screens.main.data
 
 enum class SortType {
 
@@ -6,7 +6,7 @@ enum class SortType {
 
 }
 
-object MapForSorting {
+object SortTypes {
 
     fun get(): Map<String, SortType> {
         return mapOf(

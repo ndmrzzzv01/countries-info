@@ -1,4 +1,4 @@
-package com.ndmrzzzv.countriesinfo.screens.detail
+package com.ndmrzzzv.countriesinfo.ui.screens.detail
 
 import android.content.Context
 import android.content.Intent
@@ -8,8 +8,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ndmrzzzv.countriesinfo.feature.InternetChecker
-import com.ndmrzzzv.countriesinfo.screens.detail.state.CountryDetailState
+import com.ndmrzzzv.countriesinfo.utils.InternetChecker
+import com.ndmrzzzv.countriesinfo.ui.screens.detail.state.CountryDetailState
 import com.ndmrzzzv.domain.usecase.SearchCountriesByCodeUseCase
 import kotlinx.coroutines.launch
 

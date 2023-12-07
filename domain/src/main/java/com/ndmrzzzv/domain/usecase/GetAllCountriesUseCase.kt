@@ -7,7 +7,7 @@ class GetAllCountriesUseCase(
     private val countriesRepository: CountriesRepository
 ) {
 
-    suspend fun invoke(): List<Country> {
+    suspend operator fun invoke(): List<Country> {
         return countriesRepository.getAllCountries()
     }
 

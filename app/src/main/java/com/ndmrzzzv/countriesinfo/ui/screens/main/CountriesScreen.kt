@@ -1,4 +1,4 @@
-package com.ndmrzzzv.countriesinfo.screens.main
+package com.ndmrzzzv.countriesinfo.ui.screens.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -35,8 +35,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,19 +42,23 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import com.ndmrzzzv.countriesinfo.R
-import com.ndmrzzzv.countriesinfo.screens.main.data.MapForSorting
-import com.ndmrzzzv.countriesinfo.screens.main.data.SortType
-import com.ndmrzzzv.countriesinfo.screens.main.state.CountriesState
+import com.ndmrzzzv.countriesinfo.ui.screens.main.data.SortTypes
+import com.ndmrzzzv.countriesinfo.ui.screens.main.data.SortType
+import com.ndmrzzzv.countriesinfo.ui.screens.main.state.CountriesState
 import com.ndmrzzzv.domain.model.Country
+
+data class CountriesScreenAction(
+    val onItemClick: (code: String) -> Unit = {},
+    val searchEvent: (searchString: String) -> Unit = {},
+    val sortEvent: (type: SortType) -> Unit = {},
+    val getAllCountriesEvent: () -> Unit = {},
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CountriesScreen(
     state: CountriesState,
-    onItemClick: (code: String) -> Unit = {},
-    searchEvent: (searchString: String) -> Unit = {},
-    sortEvent: (type: SortType) -> Unit = {},
-    getAllCountriesEvent: () -> Unit = {},
+    actions: CountriesScreenAction,
     savedString: String
 ) {
     val textValue = remember { mutableStateOf(savedString) }
@@ -90,9 +92,9 @@ fun CountriesScreen(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
                 ) {
-                    MapForSorting.get().forEach { pair ->
+                    SortTypes.get().forEach { pair ->
                         SortDropdownItem(pairOfSort = pair) {
-                            sortEvent(it)
+                            actions.sortEvent(it)
                             expanded = false
                         }
                     }
@@ -107,7 +109,7 @@ fun CountriesScreen(
                 label = { Text(text = "Type here to find country") },
                 onValueChange = {
                     textValue.value = it
-                    searchEvent(it)
+                    actions.searchEvent(it)
                 },
             )
         }
@@ -120,7 +122,7 @@ fun CountriesScreen(
                 ) {
                     items(state.listOfCountries) { country ->
                         CountryItem(country) {
-                            onItemClick(it)
+                            actions.onItemClick(it)
                         }
                     }
                 }
@@ -128,12 +130,7 @@ fun CountriesScreen(
 
             is CountriesState.Loading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .semantics {
-                                this.contentDescription = "Progress Indicator"
-                            }
-                    )
+                    CircularProgressIndicator()
                 }
             }
 
@@ -148,7 +145,7 @@ fun CountriesScreen(
                         textAlign = TextAlign.Center,
                     )
                     Button(
-                        onClick = { getAllCountriesEvent() },
+                        onClick = { actions.getAllCountriesEvent() },
                         colors = ButtonDefaults.buttonColors(colorResource(id = R.color.purple_200)),
                         modifier = Modifier.padding(top = 8.dp)
                     ) {
