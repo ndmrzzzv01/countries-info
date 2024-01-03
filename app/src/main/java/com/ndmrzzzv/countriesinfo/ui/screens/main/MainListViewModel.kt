@@ -22,7 +22,6 @@ class MainListViewModel(
 
     private val _sortType = MutableStateFlow<SortType?>(null)
     private val _searchText = MutableStateFlow("")
-    val searchText = _searchText.asStateFlow()
     private var allCountries = listOf<Country>()
 
     init {
@@ -34,7 +33,7 @@ class MainListViewModel(
             _sortedCountries.value = CountriesState.Loading
             if (internetChecker.checkConnection()) {
                 val result = getAllCountriesUseCase()
-                _sortedCountries.value = CountriesState.LoadedData(result)
+                _sortedCountries.value = CountriesState.LoadedData(result, _searchText.value)
                 allCountries = result
             } else {
                 _sortedCountries.value =
@@ -55,7 +54,7 @@ class MainListViewModel(
 
     private fun applySort() {
         val result = sortAndFilterCountriesUseCase(allCountries, _sortType.value, _searchText.value)
-        _sortedCountries.value = CountriesState.LoadedData(result)
+        _sortedCountries.value = CountriesState.LoadedData(result, _searchText.value)
     }
 
 }

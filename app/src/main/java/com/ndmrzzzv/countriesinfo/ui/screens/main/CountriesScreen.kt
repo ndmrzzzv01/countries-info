@@ -60,9 +60,8 @@ data class CountriesScreenAction(
 fun CountriesScreen(
     state: CountriesState,
     actions: CountriesScreenAction,
-    savedString: String
 ) {
-    val defaultStringForSearchInput = remember { mutableStateOf(savedString) }
+    var defaultStringForSearchInput by remember { mutableStateOf(state.searchRequest) }
     var expanded by remember { mutableStateOf(false) }
 
     Column(
@@ -106,10 +105,10 @@ fun CountriesScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                value = defaultStringForSearchInput.value,
+                value = defaultStringForSearchInput,
                 label = { Text(text = stringResource(id = R.string.type_here_to_find_country_title)) },
                 onValueChange = {
-                    defaultStringForSearchInput.value = it
+                    defaultStringForSearchInput = it
                     actions.searchEvent(it)
                 },
             )

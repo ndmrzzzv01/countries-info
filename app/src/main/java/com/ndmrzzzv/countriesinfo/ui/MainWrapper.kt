@@ -28,7 +28,6 @@ fun CountriesApp() {
             CountriesScreen(
                 state = viewModel.sortedCountries.collectAsState().value,
                 actions = actions,
-                savedString = viewModel.searchText.collectAsState().value
             )
         }
         composable(
