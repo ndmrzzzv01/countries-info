@@ -14,4 +14,7 @@
     <string name="neighboring_countries">Neighboring countries</string>
     <string name="you_don_t_have_internet_connection">You don`t have internet connection. Try again.</string>
     <string name="retry">Retry</string>
+    <string name="sort_by_title">Sort by</string>
+    <string name="type_here_to_find_country_title">Type here to find country</string>
+    <string name="img_country">Image of Country</string>
 </resources>

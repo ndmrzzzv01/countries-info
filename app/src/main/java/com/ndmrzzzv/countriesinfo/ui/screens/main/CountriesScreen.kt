@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,15 +43,15 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import com.ndmrzzzv.countriesinfo.R
-import com.ndmrzzzv.countriesinfo.ui.screens.main.data.SortTypes
-import com.ndmrzzzv.countriesinfo.ui.screens.main.data.SortType
 import com.ndmrzzzv.countriesinfo.ui.screens.main.state.CountriesState
 import com.ndmrzzzv.domain.model.Country
+import com.ndmrzzzv.domain.model.SortType
+import com.ndmrzzzv.domain.model.SortTypes
 
 data class CountriesScreenAction(
     val onItemClick: (code: String) -> Unit = {},
     val searchEvent: (searchString: String) -> Unit = {},
-    val sortEvent: (type: SortType) -> Unit = {},
+    val sortEvent: (type: SortType?) -> Unit = {},
     val getAllCountriesEvent: () -> Unit = {},
 )
 
@@ -61,7 +62,7 @@ fun CountriesScreen(
     actions: CountriesScreenAction,
     savedString: String
 ) {
-    val textValue = remember { mutableStateOf(savedString) }
+    val defaultStringForSearchInput = remember { mutableStateOf(savedString) }
     var expanded by remember { mutableStateOf(false) }
 
     Column(
@@ -84,7 +85,7 @@ fun CountriesScreen(
                         expanded = !expanded
                     },
                 bitmap = ImageBitmap.imageResource(id = R.drawable.sort),
-                contentDescription = "Sort by",
+                contentDescription = stringResource(id = R.string.sort_by_title),
             )
 
             Box {
@@ -92,7 +93,7 @@ fun CountriesScreen(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
                 ) {
-                    SortTypes.get().forEach { pair ->
+                    SortTypes.getAll().forEach { pair ->
                         SortDropdownItem(pairOfSort = pair) {
                             actions.sortEvent(it)
                             expanded = false
@@ -105,10 +106,10 @@ fun CountriesScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                value = textValue.value,
-                label = { Text(text = "Type here to find country") },
+                value = defaultStringForSearchInput.value,
+                label = { Text(text = stringResource(id = R.string.type_here_to_find_country_title)) },
                 onValueChange = {
-                    textValue.value = it
+                    defaultStringForSearchInput.value = it
                     actions.searchEvent(it)
                 },
             )
@@ -149,7 +150,7 @@ fun CountriesScreen(
                         colors = ButtonDefaults.buttonColors(colorResource(id = R.color.purple_200)),
                         modifier = Modifier.padding(top = 8.dp)
                     ) {
-                        Text(text = "Retry")
+                        Text(text = stringResource(id = R.string.retry))
                     }
                 }
             }
@@ -185,7 +186,7 @@ fun CountryItem(
         val (imgCountry, tvCountryName, tvCapital, tvPopulation, tvSurface) = createRefs()
         AsyncImage(
             model = country.image,
-            contentDescription = "Image of Country",
+            contentDescription = stringResource(id = R.string.img_country),
             Modifier
                 .width(120.dp)
                 .height(120.dp)

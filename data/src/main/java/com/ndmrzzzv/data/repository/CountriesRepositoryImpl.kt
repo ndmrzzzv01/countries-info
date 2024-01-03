@@ -2,6 +2,7 @@ package com.ndmrzzzv.data.repository
 
 import com.ndmrzzzv.data.api.CountriesApi
 import com.ndmrzzzv.domain.model.Country
+import com.ndmrzzzv.domain.model.SortType
 import com.ndmrzzzv.domain.repository.CountriesRepository
 
 class CountriesRepositoryImpl(

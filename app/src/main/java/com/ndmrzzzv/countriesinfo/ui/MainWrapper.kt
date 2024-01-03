@@ -28,7 +28,7 @@ fun CountriesApp() {
             CountriesScreen(
                 state = viewModel.sortedCountries.collectAsState().value,
                 actions = actions,
-                savedString = viewModel.searchText.value ?: ""
+                savedString = viewModel.searchText.collectAsState().value
             )
         }
         composable(
@@ -39,7 +39,7 @@ fun CountriesApp() {
         ) {
             val viewModel = koinViewModel<DetailViewModel>()
             val actions = ActionsBuilder.getActions(navController, viewModel, LocalContext.current)
-            CountryDetailScreen(countryState = viewModel.country.value, actions = actions)
+            CountryDetailScreen(countryState = viewModel.country.collectAsState().value, actions = actions)
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.ndmrzzzv.countriesinfo.ui.screens.main.data
+package com.ndmrzzzv.domain.model
 
 enum class SortType {
 
@@ -8,7 +8,7 @@ enum class SortType {
 
 object SortTypes {
 
-    fun get(): Map<String, SortType> {
+    fun getAll(): Map<String, SortType> {
         return mapOf(
             "Sort by name (A - Z)" to SortType.NAME_A_Z,
             "Sort by name (Z - A)" to SortType.NAME_Z_A,

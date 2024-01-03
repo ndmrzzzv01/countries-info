@@ -7,7 +7,7 @@ class SearchCountriesByCodeUseCase(
     private val countriesRepository: CountriesRepository
 ) {
 
-    suspend fun invoke(code: String): List<Country> {
+    suspend operator fun invoke(code: String): List<Country> {
         return countriesRepository.searchCountryByCode(code)
     }
 

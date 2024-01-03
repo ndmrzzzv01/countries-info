@@ -3,7 +3,7 @@ package com.ndmrzzzv.countriesinfo.ui.screens.main.state
 import com.ndmrzzzv.domain.model.Country
 
 sealed class CountriesState() {
-//sealed class CountriesState(searchRequest: String) {
+//sealed class CountriesState(val searchRequest: String) {
 
     class LoadingFailed(val message: String) : CountriesState()
 
