@@ -7,6 +7,7 @@ import com.ndmrzzzv.domain.model.Country
 import com.ndmrzzzv.domain.model.SortType
 import com.ndmrzzzv.domain.usecase.GetAllCountriesUseCase
 import com.ndmrzzzv.domain.usecase.SortAndFilterCountriesUseCase
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -14,7 +15,8 @@ import kotlinx.coroutines.launch
 class MainListViewModel(
     private val getAllCountriesUseCase: GetAllCountriesUseCase,
     private val sortAndFilterCountriesUseCase: SortAndFilterCountriesUseCase,
-    private val internetChecker: InternetChecker
+    private val internetChecker: InternetChecker,
+    private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel() {
 
     private val _sortedCountries = MutableStateFlow<CountriesState>(CountriesState.Loading)
@@ -29,7 +31,7 @@ class MainListViewModel(
     }
 
     fun getAllCountries() {
-        scopeWithExceptionHandler.launch {
+        scopeWithExceptionHandler.launch(dispatcher) {
             _sortedCountries.value = CountriesState.Loading
             if (internetChecker.checkConnection()) {
                 val result = getAllCountriesUseCase()

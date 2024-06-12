@@ -11,6 +11,7 @@ import com.ndmrzzzv.countriesinfo.utils.InternetChecker
 import com.ndmrzzzv.countriesinfo.ui.screens.detail.state.CountryDetailState
 import com.ndmrzzzv.countriesinfo.ui.screens.main.state.CountriesState
 import com.ndmrzzzv.domain.usecase.SearchCountriesByCodeUseCase
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -18,7 +19,8 @@ import kotlinx.coroutines.launch
 class DetailViewModel(
     private val searchCountriesByCodeUseCase: SearchCountriesByCodeUseCase,
     private val internetChecker: InternetChecker,
-    private val stateHandle: SavedStateHandle
+    private val stateHandle: SavedStateHandle,
+    private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel() {
 
     private val _country = MutableStateFlow<CountryDetailState>(CountryDetailState.Loading)
@@ -30,7 +32,7 @@ class DetailViewModel(
 
     fun loadInfoAboutCountry() {
         val code = stateHandle.get<String>("country_code") ?: ""
-        scopeWithExceptionHandler.launch {
+        scopeWithExceptionHandler.launch(dispatcher) {
             _country.value = CountryDetailState.Loading
             _country.value = if (internetChecker.checkConnection()) {
                 CountryDetailState.LoadedData(searchCountriesByCodeUseCase(code).getOrNull(0))
