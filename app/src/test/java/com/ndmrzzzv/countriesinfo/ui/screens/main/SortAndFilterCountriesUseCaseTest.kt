@@ -17,7 +17,7 @@ class SortAndFilterCountriesUseCaseTest {
     private val sortAndFilterCountriesUseCase = SortAndFilterCountriesUseCase()
 
     @Test
-    fun getAllCountries_setTypeSort() = scope.runTest {
+    fun getAllCountries_setTypeSort_NAME_Z_A() = scope.runTest {
         val countries = CountriesForTesting.getAllCountries()
 
         val expectedCountries = CountriesForTesting.countriesSortedDescending
@@ -25,6 +25,27 @@ class SortAndFilterCountriesUseCaseTest {
 
         Assert.assertEquals(expectedCountries, actualCountries)
     }
+
+    @Test
+    fun getAllCountries_setTypeSort_POPULATION_UP() = scope.runTest {
+        val countries = CountriesForTesting.getAllCountries()
+
+        val expectedCountries = CountriesForTesting.countriesSortedPopulationUp
+        val actualCountries = sortAndFilterCountriesUseCase.invoke(countries, SortType.POPULATION_UP, "")
+
+        Assert.assertEquals(expectedCountries, actualCountries)
+    }
+
+    @Test
+    fun getAllCountries_setTypeSort_SURFACE_DOWN() = scope.runTest {
+        val countries = CountriesForTesting.getAllCountries()
+
+        val expectedCountries = CountriesForTesting.countriesSortedSurfaceDown
+        val actualCountries = sortAndFilterCountriesUseCase.invoke(countries, SortType.SURFACE_DOWN, "")
+
+        Assert.assertEquals(expectedCountries, actualCountries)
+    }
+
 
     @Test
     fun getAllCountries_setSearchQuery() = scope.runTest {
