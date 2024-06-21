@@ -17,22 +17,22 @@ class SearchCountriesByCodeUseCaseTest {
     private val dispatcher = StandardTestDispatcher()
     private val scope = TestScope(dispatcher)
 
-    private lateinit var countriesRepository: CountriesRepository
-    private lateinit var searchCountriesByCodeUseCase: SearchCountriesByCodeUseCase
+    private lateinit var mockCountriesRepository: CountriesRepository
+    private lateinit var mockSearchCountriesByCodeUseCase: SearchCountriesByCodeUseCase
 
     @Before
     fun setup() {
-        countriesRepository = mock()
-        searchCountriesByCodeUseCase = SearchCountriesByCodeUseCase(countriesRepository)
+        mockCountriesRepository = mock()
+        mockSearchCountriesByCodeUseCase = SearchCountriesByCodeUseCase(mockCountriesRepository)
     }
 
     @Test
     fun getResultByCode_UseCase() = scope.runTest {
         val code = "test"
         val expectedResult = CountriesForTesting.countriesFilterByCode(code)
-        `when`(countriesRepository.searchCountryByCode(code)).thenReturn(expectedResult)
+        `when`(mockCountriesRepository.searchCountryByCode(code)).thenReturn(expectedResult)
 
-        val country = searchCountriesByCodeUseCase.invoke(code)
+        val country = mockSearchCountriesByCodeUseCase.invoke(code)
 
         Assert.assertEquals(expectedResult, country)
     }
@@ -41,9 +41,9 @@ class SearchCountriesByCodeUseCaseTest {
     fun getResultByEmptyCode_UseCase() = scope.runTest {
         val code = ""
         val expectedResult = CountriesForTesting.countriesFilterByCode(code)
-        `when`(countriesRepository.searchCountryByCode(code)).thenReturn(expectedResult)
+        `when`(mockCountriesRepository.searchCountryByCode(code)).thenReturn(expectedResult)
 
-        val country = searchCountriesByCodeUseCase.invoke(code)
+        val country = mockSearchCountriesByCodeUseCase.invoke(code)
 
         Assert.assertEquals(expectedResult, country)
     }

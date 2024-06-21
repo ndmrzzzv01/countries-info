@@ -5,7 +5,6 @@ import com.ndmrzzzv.domain.repository.CountriesRepository
 import com.ndmrzzzv.domain.usecase.GetAllCountriesUseCase
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Before
@@ -18,21 +17,21 @@ class GetAllCountriesUseCaseTest {
     private val dispatcher = StandardTestDispatcher()
     private val scope = TestScope(dispatcher)
 
-    private lateinit var countriesRepository: CountriesRepository
-    private lateinit var getAllCountriesUseCase: GetAllCountriesUseCase
+    private lateinit var mockCountriesRepository: CountriesRepository
+    private lateinit var mockGetAllCountriesUseCase: GetAllCountriesUseCase
 
     @Before
     fun setup() {
-        countriesRepository = mock()
-        getAllCountriesUseCase = GetAllCountriesUseCase(countriesRepository)
+        mockCountriesRepository = mock()
+        mockGetAllCountriesUseCase = GetAllCountriesUseCase(mockCountriesRepository)
     }
 
     @Test
     fun getAllCountries_UseCase() = scope.runTest {
         val expectedCountries = CountriesForTesting.getAllCountries()
-        `when`(countriesRepository.getAllCountries()).thenReturn(expectedCountries)
+        `when`(mockCountriesRepository.getAllCountries()).thenReturn(expectedCountries)
 
-        val countries = getAllCountriesUseCase.invoke()
+        val countries = mockGetAllCountriesUseCase.invoke()
 
         Assert.assertEquals(expectedCountries, countries)
     }

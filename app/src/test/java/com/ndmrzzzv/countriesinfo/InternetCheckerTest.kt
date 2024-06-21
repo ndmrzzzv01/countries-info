@@ -1,14 +1,12 @@
-package com.ndmrzzzv.countriesinfo.utils
+package com.ndmrzzzv.countriesinfo
 
 import android.content.Context
 import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
+import com.ndmrzzzv.countriesinfo.utils.InternetChecker
 import org.junit.Assert
 import org.junit.Test
-import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.times
 
 class InternetCheckerTest {
 

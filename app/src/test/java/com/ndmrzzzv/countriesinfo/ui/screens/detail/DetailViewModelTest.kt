@@ -18,39 +18,45 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mock
 import org.mockito.MockedStatic
-import org.mockito.Mockito
 import org.mockito.Mockito.any
 import org.mockito.Mockito.mockStatic
 import org.mockito.Mockito.`when`
+import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 
+@RunWith(MockitoJUnitRunner::class)
 @ExperimentalCoroutinesApi
 class DetailViewModelTest {
 
     private val dispatcher = StandardTestDispatcher()
     private val scope = TestScope(dispatcher)
 
-    private lateinit var searchCountriesByCodeUseCase: SearchCountriesByCodeUseCase
-    private lateinit var internetChecker: InternetChecker
-    private lateinit var stateHandle: SavedStateHandle
-    private lateinit var viewModel: DetailViewModel
-    private lateinit var context: Context
+    @Mock
+    private lateinit var mockSearchCountriesByCodeUseCase: SearchCountriesByCodeUseCase
+
+    @Mock
+    private lateinit var mockInternetChecker: InternetChecker
+
+    @Mock
+    private lateinit var mockContext: Context
+
+    private lateinit var mockStateHandle: SavedStateHandle
+    private lateinit var mockViewModel: DetailViewModel
     private lateinit var mockStaticUri: MockedStatic<Uri>
 
     @SuppressLint("CheckResult")
     @Before
     fun setup() {
         mockStaticUri = mockStatic(Uri::class.java)
-        context = mock<Context>()
-        searchCountriesByCodeUseCase = mock()
-        internetChecker = mock()
-        stateHandle = SavedStateHandle(mapOf("country_code" to "Test"))
-        viewModel = DetailViewModel(
-            searchCountriesByCodeUseCase, internetChecker, stateHandle, dispatcher
+        mockStateHandle = SavedStateHandle(mapOf("country_code" to "Test"))
+        mockViewModel = DetailViewModel(
+            mockSearchCountriesByCodeUseCase, mockInternetChecker, mockStateHandle, dispatcher
         )
     }
 
@@ -61,41 +67,41 @@ class DetailViewModelTest {
 
     @Test
     fun initialState_isProduced() {
-        val state = viewModel.country.value
+        val state = mockViewModel.country.value
         Assert.assertEquals(CountryDetailState.Loading, state)
     }
 
     @Test
     fun getCountryByCode_noInternet() = scope.runTest {
-        `when`(internetChecker.checkConnection()).thenReturn(false)
+        `when`(mockInternetChecker.checkConnection()).thenReturn(false)
 
-        viewModel.loadInfoAboutCountry()
+        mockViewModel.loadInfoAboutCountry()
 
-        val state = viewModel.country.value
+        val state = mockViewModel.country.value
         val failedState = state as? CountryDetailState.LoadingFailed
 
         Assert.assertNotNull(failedState)
         Assert.assertEquals("You don`t have Internet connection", failedState?.message)
-        verify(searchCountriesByCodeUseCase, never()).invoke("Test")
+        verify(mockSearchCountriesByCodeUseCase, never()).invoke("Test")
     }
 
     @Test
     fun getCountryByCode_success() = scope.runTest {
         val code = "Test"
         val country = CountriesForTesting.countriesFilterByCode(code)
-        `when`(internetChecker.checkConnection()).thenReturn(true)
-        `when`(searchCountriesByCodeUseCase(code)).thenReturn(country)
+        `when`(mockInternetChecker.checkConnection()).thenReturn(true)
+        `when`(mockSearchCountriesByCodeUseCase(code)).thenReturn(country)
 
-        viewModel.loadInfoAboutCountry()
+        mockViewModel.loadInfoAboutCountry()
 
         advanceUntilIdle()
 
-        val state = viewModel.country.value
+        val state = mockViewModel.country.value
         val successState = state as? CountryDetailState.LoadedData
 
         Assert.assertNotNull(successState)
         Assert.assertEquals(country.getOrNull(0), successState?.country)
-        verify(searchCountriesByCodeUseCase, times(1)).invoke(code)
+        verify(mockSearchCountriesByCodeUseCase, times(1)).invoke(code)
     }
 
     @Test
@@ -104,18 +110,18 @@ class DetailViewModelTest {
         val uri = mock<Uri>()
         `when`(Uri.parse(url)).thenReturn(uri)
 
-        viewModel.openGoogleMapLink(context, url)
+        mockViewModel.openGoogleMapLink(mockContext, url)
 
-        verify(context, times(1)).startActivity(any())
+        verify(mockContext, times(1)).startActivity(any())
     }
 
     @Test
     fun openGoogleMapLink_nullUrl() {
         val intent = Intent(Intent.ACTION_VIEW, null)
 
-        viewModel.openGoogleMapLink(context, null)
+        mockViewModel.openGoogleMapLink(mockContext, null)
 
-        verify(context, never()).startActivity(intent)
+        verify(mockContext, never()).startActivity(intent)
     }
 
 }
