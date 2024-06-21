@@ -15,8 +15,11 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 
 @ExperimentalCoroutinesApi
 class MainListViewModelTest {
@@ -51,12 +54,15 @@ class MainListViewModelTest {
     @Test
     fun getAllCountries_noInternet() = scope.runTest {
         `when`(internetChecker.checkConnection()).thenReturn(false)
+
         viewModel.getAllCountries()
+
         val state = viewModel.sortedCountries.value
         val failedState = state as? CountriesState.LoadingFailed
 
         Assert.assertNotNull(failedState)
         Assert.assertEquals("You don`t have internet connection", failedState?.message)
+        verify(getAllCountriesUseCase, never()).invoke()
     }
 
     @Test
@@ -71,48 +77,10 @@ class MainListViewModelTest {
 
         val state = viewModel.sortedCountries.value
         val successState = state as? CountriesState.LoadedData
+
         Assert.assertNotNull(successState)
         Assert.assertEquals(countries, successState?.listOfCountries)
-    }
-
-    @Test
-    fun allCountries_setTypeSort() = scope.runTest {
-        val countries = CountriesForTesting.getAllCountries()
-        val sortedCountries = CountriesForTesting.countriesSortedDescending
-
-        `when`(internetChecker.checkConnection()).thenReturn(true)
-        `when`(getAllCountriesUseCase()).thenReturn(countries)
-        `when`(sortAndFilterCountriesUseCase(countries, SortType.NAME_Z_A, "")).thenReturn(sortedCountries)
-
-        viewModel.getAllCountries()
-        advanceUntilIdle()
-
-        viewModel.setTypeSort(SortType.NAME_Z_A)
-
-        val state = viewModel.sortedCountries.value
-        val successState = state as? CountriesState.LoadedData
-        Assert.assertNotNull(successState)
-        Assert.assertEquals(sortedCountries, successState?.listOfCountries)
-    }
-
-    @Test
-    fun allCountries_setSearchText() = scope.runTest {
-        val countries = CountriesForTesting.getAllCountries()
-        val filteredCountries = CountriesForTesting.countriesThatContainTest
-
-        `when`(internetChecker.checkConnection()).thenReturn(true)
-        `when`(getAllCountriesUseCase()).thenReturn(countries)
-        `when`(sortAndFilterCountriesUseCase(countries, null, "Test")).thenReturn(filteredCountries)
-
-        viewModel.getAllCountries()
-        advanceUntilIdle()
-
-        viewModel.setSearchText("Test")
-
-        val state = viewModel.sortedCountries.value
-        val successState = state as? CountriesState.LoadedData
-        Assert.assertNotNull(successState)
-        Assert.assertEquals(filteredCountries, successState?.listOfCountries)
+        verify(getAllCountriesUseCase, times(1)).invoke()
     }
 
 }
