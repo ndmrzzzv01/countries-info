@@ -7,9 +7,12 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import com.ndmrzzzv.countriesinfo.data.CountriesForTesting
 import com.ndmrzzzv.countriesinfo.ui.screens.detail.state.CountryDetailState
+import com.ndmrzzzv.countriesinfo.ui.screens.main.state.CountriesState
 import com.ndmrzzzv.countriesinfo.utils.InternetChecker
+import com.ndmrzzzv.countriesinfo.utils.getPrivateField
 import com.ndmrzzzv.domain.usecase.SearchCountriesByCodeUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -122,6 +125,13 @@ class DetailViewModelTest {
         mockViewModel.openGoogleMapLink(mockContext, null)
 
         verify(mockContext, never()).startActivity(intent)
+    }
+
+    @Test
+    fun ensureCountryFlowIsInitialized() {
+        val countryFlow = mockViewModel.getPrivateField<CountryDetailState>("_country")
+
+        Assert.assertEquals(CountryDetailState.Loading, countryFlow.value)
     }
 
 }
