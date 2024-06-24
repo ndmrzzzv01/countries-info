@@ -1,11 +1,9 @@
 package com.ndmrzzzv.countriesinfo.utils
 
-import kotlinx.coroutines.flow.MutableStateFlow
-
-fun <T> Any.getPrivateField(fieldName: String): MutableStateFlow<T> {
+fun Any.getPrivateField(fieldName: String): Any? {
     val field = this::class.java.getDeclaredField(fieldName)
     field.isAccessible = true
-    return field.get(this) as MutableStateFlow<T>
+    return field.get(this)
 }
 
 fun Any.callPrivateMethod(methodName: String) {

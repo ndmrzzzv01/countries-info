@@ -69,13 +69,13 @@ class DetailViewModelTest {
     }
 
     @Test
-    fun initialState_isProduced() {
+    fun `initial state is produced`() {
         val state = mockViewModel.country.value
         Assert.assertEquals(CountryDetailState.Loading, state)
     }
 
     @Test
-    fun getCountryByCode_noInternet() = scope.runTest {
+    fun `get country by code if no internet`() = scope.runTest {
         `when`(mockInternetChecker.checkConnection()).thenReturn(false)
 
         mockViewModel.loadInfoAboutCountry()
@@ -89,9 +89,9 @@ class DetailViewModelTest {
     }
 
     @Test
-    fun getCountryByCode_success() = scope.runTest {
+    fun `get country by code if have internet`() = scope.runTest {
         val code = "Test"
-        val country = CountriesForTesting.countriesFilterByCode(code)
+        val country = CountriesForTesting.getAllCountries().filter { it.code == code }
         `when`(mockInternetChecker.checkConnection()).thenReturn(true)
         `when`(mockSearchCountriesByCodeUseCase(code)).thenReturn(country)
 
@@ -108,7 +108,7 @@ class DetailViewModelTest {
     }
 
     @Test
-    fun openGoogleMapLink_validURL() {
+    fun `open valid google map link`() {
         val url = "https://maps.google.com"
         val uri = mock<Uri>()
         `when`(Uri.parse(url)).thenReturn(uri)
@@ -119,7 +119,7 @@ class DetailViewModelTest {
     }
 
     @Test
-    fun openGoogleMapLink_nullUrl() {
+    fun `open null url with Intent`() {
         val intent = Intent(Intent.ACTION_VIEW, null)
 
         mockViewModel.openGoogleMapLink(mockContext, null)
@@ -128,8 +128,8 @@ class DetailViewModelTest {
     }
 
     @Test
-    fun ensureCountryFlowIsInitialized() {
-        val countryFlow = mockViewModel.getPrivateField<CountryDetailState>("_country")
+    fun `ensure country flow is initialized`() {
+        val countryFlow = mockViewModel.getPrivateField("_country") as MutableStateFlow<CountryDetailState>
 
         Assert.assertEquals(CountryDetailState.Loading, countryFlow.value)
     }

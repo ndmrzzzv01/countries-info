@@ -54,13 +54,13 @@ class MainListViewModelTest {
     }
 
     @Test
-    fun initialState_isProduced() {
+    fun `initial state is produced`() {
         val state = mockViewModel.sortedCountries.value
         Assert.assertEquals(CountriesState.Loading, state)
     }
 
     @Test
-    fun getAllCountries_noInternet() = scope.runTest {
+    fun `get all countries if no internet`() = scope.runTest {
         `when`(mockInternetChecker.checkConnection()).thenReturn(false)
 
         mockViewModel.getAllCountries()
@@ -74,7 +74,7 @@ class MainListViewModelTest {
     }
 
     @Test
-    fun getAllCountries_success() = scope.runTest {
+    fun `get all countries success`() = scope.runTest {
         val countries = CountriesForTesting.getAllCountries()
         `when`(mockInternetChecker.checkConnection()).thenReturn(true)
         `when`(mockGetAllCountriesUseCase()).thenReturn(countries)
@@ -92,7 +92,7 @@ class MainListViewModelTest {
     }
 
     @Test
-    fun ensureCountriesFlowIsInitialized() {
+    fun `ensure countries flow is initialized`() {
         val viewModel = MainListViewModel::class.java
 
         val countriesFlowVariable = viewModel.getDeclaredField("_sortedCountries")
@@ -104,7 +104,7 @@ class MainListViewModelTest {
     }
 
     @Test
-    fun applySort_reflection() = scope.runTest {
+    fun `apply sort func with reflection`() = scope.runTest {
         val countries = CountriesForTesting.getAllCountries()
         val searchText = "Test"
         val sortType = SortType.NAME_Z_A
@@ -115,28 +115,24 @@ class MainListViewModelTest {
         mockViewModel.getAllCountries()
 
         val sortedCountriesFlow =
-            mockViewModel.getPrivateField<CountriesState>("_sortedCountries")
+            mockViewModel.getPrivateField("_sortedCountries") as MutableStateFlow<CountriesState>
 
-        val searchTextFlow = mockViewModel.getPrivateField<String>("_searchText")
+        val searchTextFlow = mockViewModel.getPrivateField("_searchText") as MutableStateFlow<String>
         searchTextFlow.value = searchText
 
-        val sortTypeFlow = mockViewModel.getPrivateField<SortType?>("_sortType")
+        val sortTypeFlow = mockViewModel.getPrivateField("_sortType") as MutableStateFlow<SortType>
         sortTypeFlow.value = sortType
 
         mockViewModel.callPrivateMethod("applySort")
 
-//        # 1
         val state = sortedCountriesFlow.value
         Assert.assertTrue(state is CountriesState.LoadedData)
 
-//        # 2
         val loadedState = state as? CountriesState.LoadedData
         Assert.assertNotNull(loadedState)
 
-//        # 3
         Assert.assertEquals(searchText, searchTextFlow.value)
 
-//        # 4
         Assert.assertEquals(sortType, sortTypeFlow.value)
     }
 
