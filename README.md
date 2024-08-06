@@ -16,3 +16,17 @@ divided into 3 gradle modules: Android Application, network layer, domain layer.
 - Coil Image Downloader
 - Material Theme
 - Unit tests
+
+## Application
+
+### Main Screen
+![](utils/Screenshot_1.png)
+
+### Main Screen with search query
+![](utils/Screenshot_2.png)
+
+### Main Screen with sorting parameter
+![](utils/Screenshot_3.png)
+
+### Detail Screen
+![](utils/Screenshot_4.png)
