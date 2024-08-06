@@ -20,13 +20,13 @@ divided into 3 gradle modules: Android Application, network layer, domain layer.
 ## Application
 
 ### Main Screen
-![](utils/Screenshot_1.png)
+<img src="utils/Screenshot_1.png" width="30%" alt="Main Screen" />
 
 ### Main Screen with search query
-![](utils/Screenshot_2.png)
+<img src="utils/Screenshot_2.png" width="30%" alt="Main Screen with search query" />
 
 ### Main Screen with sorting parameter
-![](utils/Screenshot_3.png)
+<img src="utils/Screenshot_3.png" width="30%" alt="Main Screen with sorting parameter" />
 
 ### Detail Screen
-![](utils/Screenshot_4.png)
+<img src="utils/Screenshot_4.png" width="30%" alt="Detail Screen" />
